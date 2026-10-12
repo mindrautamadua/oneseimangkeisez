@@ -70,7 +70,7 @@ export async function openSession(
       typeof payload.sub !== "string" ||
       typeof payload.name !== "string" ||
       !isMemberships(payload.memberships) ||
-      (payload.authProvider !== "oidc" && payload.authProvider !== "mock") ||
+      !["oidc", "kinra_iam", "mock"].includes(payload.authProvider as string) ||
       typeof payload.exp !== "number"
     ) {
       return { status: "invalid" };
@@ -84,7 +84,7 @@ export async function openSession(
         email: typeof payload.email === "string" ? payload.email : null,
         memberships: payload.memberships,
         activeOrgId: typeof payload.activeOrgId === "string" ? payload.activeOrgId : null,
-        authProvider: payload.authProvider,
+        authProvider: payload.authProvider as Principal["authProvider"],
       },
     };
   } catch (e) {

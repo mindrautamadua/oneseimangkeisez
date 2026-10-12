@@ -12,7 +12,7 @@ export interface Principal {
   memberships: Membership[];
   /** External org id of the active context; always re-validated server-side. */
   activeOrgId: string | null;
-  authProvider: "oidc" | "mock";
+  authProvider: "oidc" | "kinra_iam" | "mock";
 }
 
 export type OrgType = "kinra" | "tenant";

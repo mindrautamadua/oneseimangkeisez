@@ -28,7 +28,7 @@ export default async function ProfilePage() {
             <Row label="ID pengguna">
               <code className="break-all text-xs">{p.sub}</code>
             </Row>
-            <Row label="Metode autentikasi">{p.authProvider === "mock" ? "Mock (pengembangan lokal)" : "OpenID Connect"}</Row>
+            <Row label="Metode autentikasi">{p.authProvider === "mock" ? "Mock (pengembangan lokal)" : p.authProvider === "kinra_iam" ? "KINRA IAM" : "OpenID Connect"}</Row>
             <Row label="Sesi berakhir">{expires} WIB</Row>
           </dl>
         </Card>

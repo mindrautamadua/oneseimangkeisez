@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { Building2, KeyRound, Network, ShieldAlert, ShieldCheck } from "lucide-react";
 import { getAuthState } from "@/lib/auth/current";
 import { MOCK_USERS } from "@/lib/auth/mock-users";
-import { mockAuthActive } from "@/lib/env";
+import { env, mockAuthActive } from "@/lib/env";
 import { safeReturnPath } from "@/lib/security/url";
 import { KinraLogo, Wordmark } from "@/components/wordmark";
 import { LoginParticles } from "@/components/login-orbit";
@@ -23,6 +23,9 @@ const ERRORS: Record<string, string> = {
   login_failed: "Proses masuk tidak berhasil. Silakan coba lagi.",
   state: "Sesi masuk kedaluwarsa atau tidak valid. Silakan ulangi proses masuk.",
   rate_limited: "Terlalu banyak percobaan. Tunggu sebentar lalu coba lagi.",
+  invalid_credentials: "Email/NIK atau kata sandi salah.",
+  app_not_allowed:
+    "Akun Anda belum memiliki akses ke OneSeiMangkeiSEZ. Ajukan akses melalui Helpdesk TI KINRA.",
 };
 
 const PILLARS = [
@@ -50,6 +53,9 @@ export default async function LoginPage({
   if (auth.status === "ok") redirect(next);
   const error = sp.error ? (ERRORS[sp.error] ?? ERRORS.login_failed) : null;
   const mock = mockAuthActive();
+  const iam = !mock && env().AUTH_PROVIDER === "kinra_iam";
+  const inputClass =
+    "mt-1.5 h-12 w-full rounded-xl border border-line bg-white px-3 text-base shadow-card focus:border-brand-500 focus:outline-none focus:ring-4 focus:ring-brand-500/15";
 
   return (
     <div className="grid min-h-screen lg:grid-cols-[1.1fr_1fr]">
@@ -181,6 +187,45 @@ export default async function LoginPage({
                 </button>
               </form>
             </div>
+          ) : iam ? (
+            <form action="/api/auth/iam-login" method="post" className="mt-8 space-y-4">
+              <input type="hidden" name="next" value={next} />
+              <div>
+                <label htmlFor="identifier" className="block text-sm font-semibold text-ink">
+                  Email atau NIK SAP
+                </label>
+                <input
+                  id="identifier"
+                  name="identifier"
+                  type="text"
+                  required
+                  maxLength={320}
+                  autoComplete="username"
+                  autoCapitalize="none"
+                  spellCheck={false}
+                  placeholder="nama@kinra.co.id"
+                  className={inputClass}
+                />
+              </div>
+              <div>
+                <label htmlFor="password" className="block text-sm font-semibold text-ink">
+                  Kata sandi
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  maxLength={1024}
+                  autoComplete="current-password"
+                  className={inputClass}
+                />
+              </div>
+              <button type="submit" className={`${buttonClass.primary} h-12 w-full text-base`}>
+                <KeyRound className="h-4 w-4" aria-hidden="true" />
+                Masuk
+              </button>
+            </form>
           ) : (
             <a
               href={`/api/auth/login?next=${encodeURIComponent(next)}`}

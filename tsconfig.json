@@ -42,7 +42,11 @@
     ".next-pwa-b/types/**/*.ts",
     ".next-pwa-b/dev/types/**/*.ts",
     ".next-dev-check/types/**/*.ts",
-    ".next-dev-check/dev/types/**/*.ts"
+    ".next-dev-check/dev/types/**/*.ts",
+    ".next-iam/types/**/*.ts",
+    ".next-iam/dev/types/**/*.ts",
+    ".next-build/types/**/*.ts",
+    ".next-build/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",

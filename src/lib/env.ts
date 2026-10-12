@@ -12,7 +12,7 @@ const schema = z.object({
   DATABASE_URL: z.string().min(1, "DATABASE_URL wajib diisi"),
   SESSION_SECRET: z.string().min(32, "SESSION_SECRET minimal 32 karakter"),
   SESSION_MAX_AGE_SECONDS: z.coerce.number().int().min(300).max(86400).default(28800),
-  AUTH_PROVIDER: z.enum(["oidc", "mock"]).default("oidc"),
+  AUTH_PROVIDER: z.enum(["oidc", "kinra_iam", "mock"]).default("oidc"),
   MOCK_AUTH_ENABLED: boolString,
   OIDC_ISSUER: z.string().optional().default(""),
   OIDC_CLIENT_ID: z.string().optional().default(""),
@@ -20,6 +20,25 @@ const schema = z.object({
   OIDC_SCOPES: z.string().default("openid profile email"),
   OIDC_CLAIM_MAPPING: z.enum(["zitadel", "generic"]).default("zitadel"),
   OIDC_MEMBERSHIPS_CLAIM: z.string().default("onekinra_memberships"),
+  /** KINRA IAM (AUTH_PROVIDER=kinra_iam): email/NIK + password validated by the IAM SSO API. */
+  KINRA_IAM_URL: z.url().default("https://iam-ti-pt-kinra.vercel.app"),
+  KINRA_IAM_JWKS_URL: z.url().default("https://wradhnmcjmneokbbixxi.supabase.co/auth/v1/.well-known/jwks.json"),
+  KINRA_IAM_ISSUER: z.string().default("https://wradhnmcjmneokbbixxi.supabase.co/auth/v1"),
+  KINRA_IAM_APP_CODE: z.string().min(1).default("ONESEIMANGKEISEZ"),
+  /** organizations.external_org_id that every IAM user is placed in. */
+  KINRA_IAM_ORG_ID: z.string().min(1).default("demo-org-kinra"),
+  /** JSON map from IAM application role to portal roles; "*" is the fallback. */
+  KINRA_IAM_ROLE_MAP: z
+    .string()
+    .default('{"User":["employee"],"Admin":["employee","portal_admin"],"*":["employee"]}')
+    .transform((v, ctx) => {
+      try {
+        return z.record(z.string(), z.array(z.string())).parse(JSON.parse(v));
+      } catch {
+        ctx.addIssue({ code: "custom", message: "KINRA_IAM_ROLE_MAP harus JSON { role: string[] }" });
+        return z.NEVER;
+      }
+    }),
   APP_URL_ALLOWED_HOSTS: z.string().default(""),
   APP_URL_ALLOW_HTTP: boolString,
   /** Enables the workspace AI assistant. Empty = assistant shown as "not configured". */
