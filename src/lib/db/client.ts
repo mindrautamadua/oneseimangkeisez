@@ -12,7 +12,10 @@ function create() {
   const url = env().DATABASE_URL;
   // Supabase transaction pooler (port 6543) does not support prepared statements.
   const transactionPooler = /:6543\//.test(url);
-  const sql = postgres(url, { max: 10, idle_timeout: 30, connect_timeout: 10, prepare: !transactionPooler });
+  // Serverless (Vercel) runs many short-lived instances: keep each pool small so the
+  // Supabase pooler's client limit is not exhausted.
+  const max = process.env.VERCEL ? 3 : 10;
+  const sql = postgres(url, { max, idle_timeout: 30, connect_timeout: 10, prepare: !transactionPooler });
   return { db: drizzle(sql, { schema }), sql };
 }
 
