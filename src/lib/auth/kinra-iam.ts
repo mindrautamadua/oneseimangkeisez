@@ -60,7 +60,12 @@ export async function loginWithKinraIam(identifier: string, password: string): P
   try {
     res = await fetch(new URL("/api/v1/sso/login", e.KINRA_IAM_URL), {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "x-client-id": e.KINRA_IAM_CLIENT_ID,
+        "x-client-secret": e.KINRA_IAM_CLIENT_SECRET,
+      },
       body: JSON.stringify({ identifier, password }),
       signal: AbortSignal.timeout(10_000),
       cache: "no-store",
@@ -69,6 +74,14 @@ export async function loginWithKinraIam(identifier: string, password: string): P
     throw new IdpUnavailableError(err);
   }
   if (res.status === 400 || res.status === 401 || res.status === 403 || res.status === 404) {
+    const message = await res
+      .json()
+      .then((b: { message?: unknown }) => (typeof b?.message === "string" ? b.message : ""))
+      .catch(() => "");
+    // Rejected application credentials are a portal misconfiguration, not a wrong password.
+    if (/x-client|client[ _-]?(id|secret)|kredensial aplikasi/i.test(message)) {
+      throw new IdpUnavailableError(new Error(`IAM menolak kredensial aplikasi: ${message}`));
+    }
     throw new InvalidCredentialsError();
   }
   if (!res.ok) throw new IdpUnavailableError(new Error(`IAM HTTP ${res.status}`));

@@ -25,6 +25,9 @@ const schema = z.object({
   KINRA_IAM_JWKS_URL: z.url().default("https://wradhnmcjmneokbbixxi.supabase.co/auth/v1/.well-known/jwks.json"),
   KINRA_IAM_ISSUER: z.string().default("https://wradhnmcjmneokbbixxi.supabase.co/auth/v1"),
   KINRA_IAM_APP_CODE: z.string().min(1).default("ONESEIMANGKEISEZ"),
+  /** Application credentials registered in KINRA IAM (sent as x-client-id / x-client-secret). */
+  KINRA_IAM_CLIENT_ID: z.string().optional().default(""),
+  KINRA_IAM_CLIENT_SECRET: z.string().optional().default(""),
   /** organizations.external_org_id that every IAM user is placed in. */
   KINRA_IAM_ORG_ID: z.string().min(1).default("demo-org-kinra"),
   /** JSON map from IAM application role to portal roles; "*" is the fallback. */
