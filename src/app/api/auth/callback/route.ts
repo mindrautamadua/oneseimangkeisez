@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { cookies } from "next/headers";
 import { env } from "@/lib/env";
 import { completeLogin, IdpUnavailableError, openLoginState } from "@/lib/auth/oidc";
-import { loginStateCookieName } from "@/lib/auth/cookies";
+import { baseCookieOptions, loginStateCookieName } from "@/lib/auth/cookies";
 import { writeSession } from "@/lib/auth/current";
 import { recordAudit } from "@/lib/audit/audit";
 import { safeReturnPath } from "@/lib/security/url";
@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   const base = env().PORTAL_BASE_URL;
   const store = await cookies();
   const st = await openLoginState(store.get(loginStateCookieName())?.value);
-  store.delete({ name: loginStateCookieName(), path: "/" });
+  store.delete({ name: loginStateCookieName(), ...baseCookieOptions() });
 
   if (!st) return NextResponse.redirect(new URL("/login?error=state", base));
   if (req.nextUrl.searchParams.get("error")) {

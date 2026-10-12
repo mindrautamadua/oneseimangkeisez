@@ -74,5 +74,6 @@ export async function writeSession(principal: Principal, expiresAt?: number) {
 }
 
 export async function clearSession() {
-  (await cookies()).delete({ name: sessionCookieName(), path: "/" });
+  // Same attributes as when set: browsers ignore a __Host- cookie deletion without Secure.
+  (await cookies()).delete({ name: sessionCookieName(), ...baseCookieOptions() });
 }
