@@ -1,0 +1,1 @@
+ALTER TABLE "news_items" ALTER COLUMN "topic" SET DEFAULT 'umum';

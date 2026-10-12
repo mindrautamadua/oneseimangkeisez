@@ -1,0 +1,67 @@
+{
+  "name": "onekinra",
+  "version": "0.1.0",
+  "private": true,
+  "description": "OneSeiMangkeiSEZ - Single Digital Gateway KINRA",
+  "packageManager": "pnpm@10.26.0",
+  "engines": {
+    "node": ">=20.9"
+  },
+  "scripts": {
+    "dev": "next dev -p 3100",
+    "build": "next build",
+    "start": "next start -p 3100",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "db:up": "supabase start",
+    "db:down": "supabase stop",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "db:seed": "tsx scripts/seed.ts",
+    "catalogue:doc": "tsx scripts/catalogue-doc.ts",
+    "db:reset": "tsx scripts/reset.ts && pnpm db:migrate && pnpm db:seed",
+    "db:test:init": "docker exec supabase_db_onekinra psql -U postgres -c \"CREATE DATABASE onekinra_test\" && ONEKINRA_TARGET=test pnpm db:migrate",
+    "db:studio": "open http://127.0.0.1:54363",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.133.0",
+    "drizzle-orm": "^0.45.4",
+    "jose": "^6.2.12",
+    "lucide-react": "^1.54.0",
+    "next": "16.4.0",
+    "openid-client": "^6.8.8",
+    "postgres": "^3.4.9",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.0",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "dotenv": "^18.0.7",
+    "drizzle-kit": "^0.31.11",
+    "eslint": "^10.12.0",
+    "eslint-config-next": "^16.4.0",
+    "prettier": "^3.9.9",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
+    "typescript": "5.9.3",
+    "vitest": "^5.0.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp",
+      "unrs-resolver"
+    ]
+  }
+}

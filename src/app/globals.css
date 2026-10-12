@@ -1,0 +1,215 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens (ui-ux-pro-max: "Trust & Authority" for enterprise/government).
+ * Navy + blue CTA, slate neutrals. These remain PLACEHOLDERS until KINRA supplies
+ * approved brand colours and typography (PRD §8, §20). Change values here only.
+ */
+@theme {
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-heading), var(--font-body), ui-sans-serif, system-ui, sans-serif;
+
+  --color-navy-950: #020617;
+  --color-navy-900: #0f172a;
+  --color-navy-800: #1e293b;
+  --color-navy-700: #334155;
+
+  --color-brand-50: #f0f9ff;
+  --color-brand-100: #e0f2fe;
+  --color-brand-200: #bae6fd;
+  --color-brand-500: #0284c7;
+  --color-brand-600: #0369a1;
+  --color-brand-700: #075985;
+  --color-brand-900: #0c4a6e;
+
+  --color-tenant-50: #f0fdfa;
+  --color-tenant-100: #ccfbf1;
+  --color-tenant-200: #99f6e4;
+  --color-tenant-600: #0f766e;
+  --color-tenant-700: #115e59;
+  --color-tenant-900: #134e4a;
+
+  --color-ink: #0f172a;
+  --color-muted: #475569;
+  --color-line: #e2e8f0;
+  --color-surface: #ffffff;
+  --color-canvas: #f8fafc;
+
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.04), 0 1px 3px rgb(15 23 42 / 0.06);
+  --shadow-lift: 0 4px 6px -1px rgb(15 23 42 / 0.06), 0 10px 24px -6px rgb(15 23 42 / 0.12);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    line-height: 1.55;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  /* Tailwind v4 no longer sets a pointer cursor on buttons. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  select,
+  summary,
+  label[for] {
+    cursor: pointer;
+  }
+}
+
+/* Visible focus indicator for keyboard users (WCAG 2.4.7). */
+:focus-visible {
+  outline: 2px solid var(--color-brand-500);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Login page motion (kn-*). Decorative only; disabled under reduced motion below. */
+@keyframes kn-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes kn-grid-drift {
+  to {
+    background-position: 48px 48px;
+  }
+}
+@keyframes kn-float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(40px, -30px) scale(1.12);
+  }
+}
+@keyframes kn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes kn-rise {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  15%,
+  80% {
+    opacity: var(--o, 0.6);
+  }
+  100% {
+    transform: translateY(-70vh);
+    opacity: 0;
+  }
+}
+@keyframes kn-kenburns {
+  0% {
+    transform: scale(1.02) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.1) translate(-1.5%, 1%);
+  }
+}
+@keyframes kn-sweep {
+  0%,
+  70% {
+    transform: translateX(0) skewX(-20deg);
+  }
+  100% {
+    transform: translateX(400%) skewX(-20deg);
+  }
+}
+@keyframes kn-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+@keyframes kn-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+}
+.kn-enter {
+  animation: kn-fade-up 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+.kn-grid {
+  animation: kn-grid-drift 14s linear infinite;
+}
+.kn-blob {
+  animation: kn-float 16s ease-in-out infinite;
+  animation-delay: var(--d, 0ms);
+}
+.kn-spin {
+  transform-box: view-box;
+  transform-origin: center;
+  animation: kn-spin var(--t, 40s) linear infinite;
+}
+.kn-spin-rev {
+  animation-direction: reverse;
+}
+.kn-rise {
+  animation: kn-rise var(--t, 14s) linear infinite;
+  animation-delay: var(--d, 0ms);
+}
+.kn-ping,
+.kn-breathe {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.kn-ping {
+  animation: kn-ping 2.6s ease-out infinite;
+  animation-delay: var(--d, 0ms);
+}
+.kn-breathe {
+  animation: kn-breathe 4s ease-in-out infinite;
+}
+.kn-kenburns {
+  transform-origin: 70% 40%;
+  animation: kn-kenburns 40s ease-in-out infinite alternate;
+}
+.kn-sweep {
+  animation: kn-sweep 12s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    /* Without this, infinite animations would loop every 0.01ms (flicker). */
+    animation-iteration-count: 1 !important;
+  }
+  .kn-enter {
+    animation: none !important;
+  }
+  .kn-ping,
+  .kn-rise,
+  .kn-sweep {
+    animation: none !important;
+    opacity: 0;
+  }
+}
